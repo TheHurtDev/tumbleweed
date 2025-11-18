@@ -1,6 +1,21 @@
 [package]
-name = "physics_engine_3d_tutorial"
+name = "tumbleweed"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.98"
+repository = "https://github.com/TheHurtDev/tumbleweed"
+description = "A lightweight, general-purpose 3D physics engine"
+license = "MIT OR Apache-2.0"
 
 [dependencies]
+anyhow = "1.0"
+bytemuck = "1.25"
+crevice = "0.20"
+hawthorn = "0.1"
+image = "0.25"
+log = "0.4"
+pollster = "1.0"
+pretty_env_logger = "0.5"
+rand = "0.10"
+wgpu = "30.0"
+winit = "0.30"

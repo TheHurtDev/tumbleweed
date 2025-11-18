@@ -1,0 +1,43 @@
+*               text=auto eol=lf
+
+*.rs            text eol=lf
+*.toml          text eol=lf
+*.md            text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+*.json          text eol=lf
+*.glsl          text eol=lf
+*.vert          text eol=lf
+*.frag          text eol=lf
+*.wgsl          text eol=lf
+*.hlsl          text eol=lf
+*.shader        text eol=lf
+*.py            text eol=lf
+*.sh            text eol=lf
+*.bat           text eol=crlf
+
+*.png           -text
+*.jpg           -text
+*.jpeg          -text
+*.gif           -text
+*.webp          -text
+*.ico           -text
+*.pdf           -text
+*.zip           -text
+*.gz            -text
+*.7z            -text
+*.rar           -text
+*.bin           -text
+*.wasm          -text
+*.mp3           -text
+*.mp4           -text
+*.mov           -text
+*.avi           -text
+*.ttf           -text
+*.otf           -text
+*.woff          -text
+*.woff2         -text
+*.glb           -text
+*.gltf          -text
+*.fbx           -text
+*.blend         -text

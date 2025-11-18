@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "polymeilex.wgsl",
+    "rust-lang.rust-analyzer"
+  ],
+  "unwantedRecommendations": []
+}
