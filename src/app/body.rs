@@ -12,6 +12,7 @@ use crate::physics::Particle;
 /// purposes.
 #[derive(Debug, Clone)]
 pub struct Body {
+    pub tag: String,
     pub particle: Particle,
     pub orientation: Quat,
     pub scale: Vec3,

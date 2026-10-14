@@ -1,6 +1,6 @@
 use std::any::Any;
 
-use crate::{app::Body, physics::ParticleSystem};
+use crate::app::Body;
 
 pub trait Entity {
     fn as_any(&self) -> &dyn Any;
@@ -22,4 +22,3 @@ macro_rules! impl_entity {
 }
 
 impl_entity!(Body);
-impl_entity!(ParticleSystem);
