@@ -24,7 +24,6 @@ pub struct App {
     pub world: World,
 
     name: String,
-    meshes_to_create: HashMap<String, Mesh>,
     systems: Vec<Box<SystemFn>>,
 
     last_frame_start_time: Option<Instant>,
@@ -69,7 +68,6 @@ impl App {
         App {
             name: name.into(),
             world: World::default(),
-            meshes_to_create: HashMap::new(),
             systems: Vec::new(),
 
             last_frame_start_time: None,
@@ -78,7 +76,7 @@ impl App {
     }
 
     pub fn create_mesh(&mut self, name: &str, mesh: Mesh) {
-        self.meshes_to_create.insert(String::from(name), mesh);
+        self.world.meshes.insert(String::from(name), mesh);
     }
 
     pub fn add_system<T>(&mut self, system: T)
@@ -121,14 +119,8 @@ impl App {
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         if self.wgpu_context.is_none() {
-            let mut wgpu_context = pollster::block_on(WgpuContext::try_new(&self.name, event_loop))
+            let wgpu_context = pollster::block_on(WgpuContext::try_new(&self.name, event_loop))
                 .unwrap_or_else(|e| panic!("failed to create wgpu context: {e:?}"));
-
-            for (handle, mesh) in self.meshes_to_create.drain() {
-                let buffers = MeshBuffers::from_mesh(mesh, &wgpu_context.device);
-
-                wgpu_context.mesh_buffers.insert(handle, buffers);
-            }
 
             self.wgpu_context = Some(wgpu_context);
         }
@@ -147,6 +139,14 @@ impl ApplicationHandler for App {
 
         match event {
             WindowEvent::RedrawRequested => {
+                for (handle, mesh) in self.world.meshes.iter() {
+                    if !wgpu_context.mesh_buffers.contains_key(handle) {
+                        let buffers = MeshBuffers::from_mesh(mesh.clone(), &wgpu_context.device);
+
+                        wgpu_context.mesh_buffers.insert(handle.clone(), buffers);
+                    }
+                }
+
                 let now = Instant::now();
 
                 let last_frame_start_time = match self.last_frame_start_time {
@@ -181,6 +181,12 @@ impl ApplicationHandler for App {
                 {
                     event_loop.exit();
                 }
+            }
+            WindowEvent::MouseInput { state, button, .. } => {
+                self.world.input_state.handle_mouse_input(button, state);
+            }
+            WindowEvent::CursorMoved { position, .. } => {
+                self.world.input_state.handle_cursor_moved(position);
             }
             WindowEvent::Resized(size) => {
                 self.handle_window_resize(size.width, size.height);

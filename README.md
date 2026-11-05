@@ -13,6 +13,8 @@ https://www.youtube.com/@TheHurtDev
 cargo run --release --example demo
 ```
 
+The entry point for this demo is [`examples/demo.rs`](/examples/demo.rs).
+
 ## Branching Strategy
 
 A separate release branch is created for each episode in the series. This lets you check

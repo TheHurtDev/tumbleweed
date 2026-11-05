@@ -1,6 +1,7 @@
+use std::collections::HashMap;
 use std::time::Duration;
 
-use crate::app::{Camera, DrawCommand, Entity, InputState, SurfaceInfo};
+use crate::app::{Camera, DrawCommand, Entity, InputState, Mesh, SurfaceInfo};
 
 pub struct World {
     pub frame_duration: Duration,
@@ -12,6 +13,7 @@ pub struct World {
     pub draw_commands: Vec<DrawCommand>,
 
     pub entities: EntityStore,
+    pub meshes: HashMap<String, Mesh>,
 }
 
 pub struct EntityStore {
@@ -29,6 +31,7 @@ impl Default for World {
             draw_commands: Vec::new(),
 
             entities: EntityStore { inner: Vec::new() },
+            meshes: HashMap::new(),
         }
     }
 }

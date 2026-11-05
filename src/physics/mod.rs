@@ -7,6 +7,9 @@ use crate::app::{Body, World};
 mod particle;
 pub use particle::*;
 
+mod raycast;
+pub use raycast::*;
+
 /// Defines our physics pipeline.
 ///
 /// This function is intended to be called many times per second and drives
@@ -23,6 +26,8 @@ pub fn physics_pipeline(world: &mut World) {
         particle.force_accum = Vec3::ZERO;
 
         particle.velocity += delta_secs * acceleration;
+        particle.velocity *= particle.damping.powf(delta_secs);
+
         particle.position += delta_secs * particle.velocity;
     }
 }

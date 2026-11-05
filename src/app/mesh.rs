@@ -52,6 +52,14 @@ impl Mesh {
     pub fn indices(&self) -> &[u16] {
         &self.0.indices
     }
+
+    pub fn positions(&self) -> impl Iterator<Item = Vec3> {
+        self.vertices().iter().map(|v| v.position)
+    }
+
+    pub fn normals(&self) -> impl Iterator<Item = Vec3> {
+        self.vertices().iter().map(|v| v.normal)
+    }
 }
 
 impl Mesh {
@@ -211,5 +219,47 @@ impl Mesh {
         ];
 
         Self::new(VERTICES.to_vec(), INDICES.to_vec())
+    }
+
+    pub fn new_uv_sphere(level_of_detail: u16) -> Mesh {
+        const RADIUS: f32 = 0.5;
+
+        let stack_count = 2 * (level_of_detail + 1);
+        let slice_count = 2 * stack_count;
+
+        let mut vertices: Vec<Vertex> = Vec::new();
+
+        for y in 0..=stack_count {
+            let theta = (y as f32 / stack_count as f32) * core::f32::consts::PI;
+            let (sin_theta, cos_theta) = theta.sin_cos();
+
+            for x in 0..=slice_count {
+                let phi = (x as f32 / slice_count as f32) * 2.0 * core::f32::consts::PI;
+                let (sin_phi, cos_phi) = phi.sin_cos();
+
+                let normal = vec3(sin_theta * cos_phi, cos_theta, sin_theta * sin_phi);
+
+                vertices.push(Vertex {
+                    position: RADIUS * normal,
+                    normal,
+                });
+            }
+        }
+
+        let mut indices: Vec<u16> = Vec::new();
+
+        for y in 0..stack_count {
+            for x in 0..slice_count {
+                let i0 = y * (slice_count + 1) + x;
+                let i1 = i0 + 1;
+                let i2 = i0 + slice_count + 1;
+                let i3 = i2 + 1;
+
+                indices.extend_from_slice(&[i0, i1, i2]);
+                indices.extend_from_slice(&[i1, i3, i2]);
+            }
+        }
+
+        Self::new(vertices, indices)
     }
 }

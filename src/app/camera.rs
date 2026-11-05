@@ -1,6 +1,7 @@
-use hawthorn::math::{Mat3, Mat4, Quat, Vec3};
+use hawthorn::math::{Mat3, Mat4, Quat, Vec2, Vec3};
 
 use crate::app::SurfaceInfo;
+use crate::physics::Ray;
 
 #[derive(Debug, Clone)]
 pub struct Camera {
@@ -103,6 +104,31 @@ impl Camera {
             .with_col(3, (-shadow_box_rotated_position).to_vec4(1.0));
 
         projection_mat * light_view_mat
+    }
+
+    /// Returns a [`Ray`] in world space originating from the camera's position, with a direction
+    /// determined by its orientation and the provided screen-space coordinates.
+    pub fn screen_ray(&self, surface_info: &SurfaceInfo, viewport_coords: (u32, u32)) -> Ray {
+        let screen_position = Vec2::new(
+            viewport_coords.0 as f32 + 0.5,
+            viewport_coords.1 as f32 + 0.5,
+        );
+        let ndc_coords = Vec2::new(
+            2.0 * screen_position.x / (surface_info.width as f32) - 1.0,
+            -2.0 * screen_position.y / (surface_info.height as f32) + 1.0,
+        );
+        let clip_coords = ndc_coords.to_vec4(0.0, 1.0);
+
+        let view_matrix = self.to_view_matrix();
+        let proj_matrix = self.to_perspective_proj_matrix(surface_info);
+
+        let p = (proj_matrix * view_matrix).inverse() * clip_coords;
+        let target = p.xyz() / p.w();
+
+        Ray {
+            source: self.position,
+            direction: (target - self.position).normalize(),
+        }
     }
 }
 

@@ -6,6 +6,7 @@ pub struct Particle {
     pub position: Vec3,
     pub velocity: Vec3,
     pub inv_mass: f32,
+    pub damping: f32,
 
     pub(crate) force_accum: Vec3,
 }
@@ -30,6 +31,11 @@ impl Particle {
     /// to zero at the end of each frame.
     pub fn add_force(&mut self, force: Vec3) {
         self.force_accum += force;
+    }
+
+    /// Applies an impulse to the particle.
+    pub fn apply_impulse(&mut self, impulse: Vec3) {
+        self.velocity += self.inv_mass * impulse;
     }
 
     /// Sets the acceleration of the particle.
@@ -62,6 +68,16 @@ impl Particle {
 
         self
     }
+
+    pub fn with_damping(mut self, damping: f32) -> Self {
+        if !(0.0..=1.0).contains(&damping) {
+            panic!("damping {damping} is not in valid range 0.0 to 1.0");
+        }
+
+        self.damping = damping;
+
+        self
+    }
 }
 
 impl Default for Particle {
@@ -70,6 +86,7 @@ impl Default for Particle {
             position: Vec3::ZERO,
             velocity: Vec3::ZERO,
             inv_mass: 0.0,
+            damping: 0.9,
             force_accum: Vec3::ZERO,
         }
     }
